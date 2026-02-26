@@ -7,17 +7,17 @@ import { Copy, Check, MessageSquarePlus, User, Bot, AlertCircle, History, Messag
 import { motion, AnimatePresence } from 'motion/react';
 
 const STATUS_COLORS = {
-  [TicketStatus.OPEN]: 'bg-blue-100 text-blue-800 border-blue-200',
-  [TicketStatus.PROCESSING]: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  [TicketStatus.RESOLVED]: 'bg-green-100 text-green-800 border-green-200',
-  [TicketStatus.ESCALATED]: 'bg-red-100 text-red-800 border-red-200',
-  [TicketStatus.AWAITING_HUMAN]: 'bg-purple-100 text-purple-800 border-purple-200',
+  [TicketStatus.OPEN]: 'bg-blue-100 text-blue-700 border-blue-200 shadow-sm',
+  [TicketStatus.PROCESSING]: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+  [TicketStatus.RESOLVED]: 'bg-green-100 text-green-700 border-green-200 shadow-sm',
+  [TicketStatus.ESCALATED]: 'bg-red-100 text-red-700 border-red-200',
+  [TicketStatus.AWAITING_HUMAN]: 'bg-purple-100 text-purple-700 border-purple-200 shadow-sm',
 };
 
 const SENTIMENT_COLORS = (score: number) => {
-  if (score > 0.7) return 'text-green-500 bg-green-50 border-green-100';
-  if (score < 0.3) return 'text-red-500 bg-red-50 border-red-100';
-  return 'text-yellow-600 bg-yellow-50 border-yellow-100';
+  if (score > 0.7) return 'text-green-700 bg-green-50 border-green-100';
+  if (score < 0.3) return 'text-red-700 bg-red-50 border-red-100';
+  return 'text-yellow-700 bg-yellow-50 border-yellow-100';
 };
 
 const SentimentBadge: React.FC<{ score: number }> = ({ score }) => {
@@ -25,7 +25,7 @@ const SentimentBadge: React.FC<{ score: number }> = ({ score }) => {
   const emoji = score > 0.7 ? '😊' : score < 0.3 ? '😠' : '😐';
   
   return (
-    <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold border ${SENTIMENT_COLORS(score)}`}>
+    <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-black uppercase tracking-wider border ${SENTIMENT_COLORS(score)}`}>
       <span>{emoji}</span>
       <span>{label} ({(score * 100).toFixed(0)}%)</span>
     </div>
@@ -46,20 +46,20 @@ const AISuggestionChip: React.FC<{ suggestion: string; onUse: (s: string) => voi
     <motion.div 
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      whileHover={{ scale: 1.03, backgroundColor: '#eff6ff' }}
+      whileHover={{ scale: 1.03, backgroundColor: 'rgba(0, 0, 0, 0.05)' }}
       whileTap={{ scale: 0.97 }}
       onClick={() => onUse(suggestion)}
-      className="group flex items-center gap-2.5 bg-white text-blue-700 px-4 py-2 rounded-full border border-blue-100 hover:border-blue-300 transition-all cursor-pointer shadow-sm hover:shadow-md max-w-[280px]"
+      className="group flex items-center gap-2.5 bg-black/5 text-gray-900 px-4 py-2 rounded-xl border border-black/5 hover:border-cyber-blue/50 transition-all cursor-pointer shadow-sm max-w-[280px]"
     >
-      <Bot className="w-3.5 h-3.5 text-blue-500" />
-      <span className="text-[11px] font-bold truncate flex-1 leading-tight" title={suggestion}>{suggestion}</span>
+      <Bot className="w-3.5 h-3.5 text-cyber-blue" />
+      <span className="text-xs font-bold truncate flex-1 leading-tight" title={suggestion}>{suggestion}</span>
       <button 
         onClick={handleCopy}
-        className="ml-1 p-1 hover:bg-blue-200 rounded-full transition-colors"
+        className="ml-1 p-1 hover:bg-white/10 rounded-full transition-colors"
         title="Copy to clipboard"
       >
         {copied ? (
-          <Check className="w-3 h-3 text-green-600" />
+          <Check className="w-3 h-3 text-cyber-green" />
         ) : (
           <Copy className="w-3 h-3 opacity-40 group-hover:opacity-100" />
         )}
@@ -147,44 +147,47 @@ export const Dashboard: React.FC = () => {
     { name: 'Web Form', value: tickets.filter(t => t.source_channel === Channel.WEB_FORM).length },
   ];
 
-  const COLORS = ['#3b82f6', '#10b981', '#f59e0b'];
+  const COLORS = ['#00f2ff', '#39ff14', '#bc00ff'];
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
       {/* Sidebar - Analytics */}
-      <div className="lg:col-span-1 space-y-6">
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-          <h3 className="text-lg font-bold mb-4">Quick Stats</h3>
+      <div className="lg:col-span-1 space-y-8">
+        <div className="glass-card p-6 neon-border">
+          <h3 className="text-sm font-black text-gray-500 uppercase tracking-[0.2em] mb-6">Neural Stats</h3>
           <div className="grid grid-cols-2 gap-4">
             {stats.map(s => (
-              <div key={s.label} className="p-3 bg-gray-50 rounded-lg">
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">{s.label}</p>
-                <p className={`text-xl font-bold ${s.color}`}>{s.value}</p>
+              <div key={s.label} className="p-4 bg-black/5 rounded-xl border border-black/5">
+                <p className="text-xs text-gray-500 font-black uppercase tracking-widest mb-1">{s.label}</p>
+                <p className={`text-2xl font-black ${s.color}`}>{s.value}</p>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-          <h3 className="text-lg font-bold mb-4">Channel Volume</h3>
+        <div className="glass-card p-6 neon-border">
+          <h3 className="text-sm font-black text-gray-500 uppercase tracking-[0.2em] mb-6">Channel Load</h3>
           <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={chartData} innerRadius={40} outerRadius={60} paddingAngle={5} dataKey="value">
+                <Pie data={chartData} innerRadius={50} outerRadius={70} paddingAngle={8} dataKey="value" stroke="none">
                   {chartData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
                 </Pie>
-                <Tooltip />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#fff', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '12px', color: '#1a1a1a' }}
+                  itemStyle={{ color: '#0070f3' }}
+                />
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="mt-4 space-y-2">
+          <div className="mt-6 space-y-3">
             {chartData.map((d, i) => (
-              <div key={d.name} className="flex justify-between items-center text-sm">
-                <span className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[i] }}></div>
-                  {d.name}
+              <div key={d.name} className="flex justify-between items-center text-xs font-black uppercase tracking-widest">
+                <span className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: COLORS[i], color: COLORS[i] }}></div>
+                  <span className="text-gray-400">{d.name}</span>
                 </span>
-                <span className="font-bold">{d.value}</span>
+                <span className="text-gray-900">{d.value}</span>
               </div>
             ))}
           </div>
@@ -192,20 +195,22 @@ export const Dashboard: React.FC = () => {
       </div>
 
       {/* Main Content - Ticket List */}
-      <div className="lg:col-span-3 space-y-6">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="p-6 border-b border-gray-100 flex flex-wrap justify-between items-center gap-4">
-            <h2 className="text-2xl font-bold">Active Tickets</h2>
-            <div className="flex gap-2 bg-gray-100 p-1 rounded-lg">
+      <div className="lg:col-span-3 space-y-8">
+        <div className="glass-card neon-border overflow-hidden">
+          <div className="p-8 border-b border-black/5 flex flex-wrap justify-between items-center gap-6">
+            <h2 className="text-2xl font-black text-gray-900 tracking-tighter">ACTIVE <span className="text-cyber-blue">NODES</span></h2>
+            <div className="flex gap-2 bg-black/5 p-1 rounded-xl border border-black/5">
               {['all', ...Object.values(TicketStatus)].map(s => (
                 <button
                   key={s}
                   onClick={() => setFilter(s as any)}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
-                    filter === s ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                  className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all duration-300 ${
+                    filter === s 
+                      ? 'bg-cyber-blue text-white shadow-md' 
+                      : 'text-gray-500 hover:text-gray-900 hover:bg-black/5'
                   }`}
                 >
-                  {s.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                  {s.replace('_', ' ')}
                 </button>
               ))}
             </div>
@@ -213,63 +218,63 @@ export const Dashboard: React.FC = () => {
 
           <div className="overflow-x-auto">
             <table className="w-full text-left">
-              <thead className="bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <thead className="bg-black/5 text-xs font-black text-gray-500 uppercase tracking-[0.2em]">
                 <tr>
-                  <th className="px-6 py-4">Customer</th>
-                  <th className="px-6 py-4">Subject</th>
-                  <th className="px-6 py-4">Channel</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4">Sentiment</th>
-                  <th className="px-6 py-4">Created</th>
-                  <th className="px-6 py-4">Actions</th>
+                  <th className="px-8 py-5">Identity</th>
+                  <th className="px-8 py-5">Payload</th>
+                  <th className="px-8 py-5">Channel</th>
+                  <th className="px-8 py-5">State</th>
+                  <th className="px-8 py-5">Sentiment</th>
+                  <th className="px-8 py-5">Timestamp</th>
+                  <th className="px-8 py-5">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-black/5">
                 {filteredTickets.map(t => (
-                  <tr key={t.id} className="hover:bg-blue-50/30 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="font-medium text-gray-900">{t.customer_name}</div>
-                      <div className="text-xs text-gray-500">{t.customer_email}</div>
+                  <tr key={t.id} className="hover:bg-black/[0.02] transition-colors group">
+                    <td className="px-8 py-6">
+                      <div className="font-bold text-gray-900 text-base">{t.customer_name}</div>
+                      <div className="text-xs text-gray-500 font-medium">{t.customer_email}</div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-gray-900 line-clamp-1">{t.subject}</div>
-                      <div className="mt-1">
-                        <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-bold rounded uppercase tracking-wider border border-gray-200">
+                    <td className="px-8 py-6">
+                      <div className="text-base font-medium text-gray-700 line-clamp-1">{t.subject}</div>
+                      <div className="mt-2">
+                        <span className="px-2 py-0.5 bg-black/5 text-cyber-blue text-xs font-black rounded uppercase tracking-widest border border-black/10">
                           {t.category}
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-center">
-                      <span title={t.source_channel} className="text-xl">{CHANNEL_ICONS[t.source_channel]}</span>
+                    <td className="px-8 py-6 text-center">
+                      <span title={t.source_channel} className="text-xl filter grayscale group-hover:grayscale-0 transition-all">{CHANNEL_ICONS[t.source_channel]}</span>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase border ${STATUS_COLORS[t.status]}`}>
+                    <td className="px-8 py-6">
+                      <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest border ${STATUS_COLORS[t.status]}`}>
                         {t.status.replace('_', ' ')}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-8 py-6">
                       {t.messages[0]?.sentiment_score !== undefined ? (
                         <SentimentBadge score={t.messages[0].sentiment_score} />
                       ) : (
-                        <span className="text-xs text-gray-400 italic">N/A</span>
+                        <span className="text-xs text-gray-600 font-black uppercase tracking-widest">N/A</span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-xs text-gray-500">
+                    <td className="px-8 py-6 text-xs text-gray-500 font-bold">
                       {new Date(t.created_at).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-8 py-6">
                       <button 
                         onClick={() => setSelectedTicket(t)}
-                        className="text-blue-600 hover:text-blue-800 font-semibold text-sm underline"
+                        className="text-cyber-blue hover:text-gray-900 font-black text-xs uppercase tracking-widest underline underline-offset-4 transition-colors"
                       >
-                        View Thread
+                        Access Link
                       </button>
                     </td>
                   </tr>
                 ))}
                 {filteredTickets.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-gray-400 italic">No tickets found matching this filter.</td>
+                    <td colSpan={7} className="px-8 py-20 text-center text-gray-600 font-black uppercase tracking-[0.3em] text-sm">No active nodes detected</td>
                   </tr>
                 )}
               </tbody>
@@ -281,86 +286,86 @@ export const Dashboard: React.FC = () => {
       {/* Ticket Modal */}
       <AnimatePresence>
         {selectedTicket && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden"
+              className="glass-card border-black/10 w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden"
             >
-              <div className="p-6 border-b border-gray-100">
-                <div className="flex justify-between items-center mb-4">
+              <div className="p-8 border-b border-black/5 bg-black/5">
+                <div className="flex justify-between items-start mb-6">
                   <div>
-                    <div className="flex items-center gap-3 mb-1">
-                      <h3 className="text-xl font-bold">Ticket: {selectedTicket.subject}</h3>
+                    <div className="flex items-center gap-4 mb-3">
+                      <h3 className="text-2xl font-black text-gray-900 tracking-tighter">SESSION: {selectedTicket.subject}</h3>
                       <div className="flex gap-2">
-                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase border ${STATUS_COLORS[selectedTicket.status]}`}>
+                        <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest border ${STATUS_COLORS[selectedTicket.status]}`}>
                           {selectedTicket.status.replace('_', ' ')}
                         </span>
-                        <span className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full text-[10px] font-black uppercase border border-slate-200">
+                        <span className="px-3 py-1 bg-black/5 text-cyber-blue rounded-full text-xs font-black uppercase tracking-widest border border-black/10">
                           {selectedTicket.category}
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
-                      <User className="w-3.5 h-3.5" />
-                      <p>Customer: <span className="font-bold text-gray-900">{selectedTicket.customer_name}</span> ({selectedTicket.customer_email})</p>
+                    <div className="flex items-center gap-3 text-xs text-gray-500 font-medium">
+                      <User className="w-4 h-4 text-cyber-blue" />
+                      <p>Subject Identity: <span className="text-gray-900 font-bold">{selectedTicket.customer_name}</span> <span className="text-gray-500">[{selectedTicket.customer_email}]</span></p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
                     {selectedTicket.status !== TicketStatus.AWAITING_HUMAN && (
                       <button 
                         onClick={handleHandover}
-                        className="px-4 py-2 bg-purple-100 text-purple-700 text-sm font-bold rounded-lg hover:bg-purple-200 transition-colors flex items-center gap-2 border border-purple-200"
+                        className="px-5 py-2.5 bg-cyber-purple/10 text-cyber-purple text-xs font-black uppercase tracking-widest rounded-xl hover:bg-cyber-purple/20 transition-all flex items-center gap-3 border border-cyber-purple/30 shadow-sm"
                       >
                         <AlertCircle className="w-4 h-4" />
-                        Human Handover
+                        Human Override
                       </button>
                     )}
-                    <button onClick={() => setSelectedTicket(null)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                    <button onClick={() => setSelectedTicket(null)} className="p-2 hover:bg-black/5 rounded-full transition-colors text-gray-400 hover:text-gray-900">
                       <X className="w-6 h-6" />
                     </button>
                   </div>
                 </div>
 
-                <div className="flex gap-6 border-b border-gray-100 -mb-6">
+                <div className="flex gap-8 border-b border-black/5 -mb-8">
                   <button 
                     onClick={() => setModalTab('thread')}
-                    className={`pb-3 px-1 text-sm font-bold transition-all border-b-2 flex items-center gap-2 ${modalTab === 'thread' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+                    className={`pb-4 px-2 text-xs font-black uppercase tracking-[0.2em] transition-all border-b-2 flex items-center gap-3 ${modalTab === 'thread' ? 'border-cyber-blue text-cyber-blue' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
                   >
                     <MessageCircle className="w-4 h-4" />
-                    Conversation Thread
+                    Neural Thread
                   </button>
                   <button 
                     onClick={() => setModalTab('history')}
-                    className={`pb-3 px-1 text-sm font-bold transition-all border-b-2 flex items-center gap-2 ${modalTab === 'history' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+                    className={`pb-4 px-2 text-xs font-black uppercase tracking-[0.2em] transition-all border-b-2 flex items-center gap-3 ${modalTab === 'history' ? 'border-cyber-blue text-cyber-blue' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
                   >
                     <History className="w-4 h-4" />
-                    Customer History ({customerHistory.length})
+                    Archive Data ({customerHistory.length})
                   </button>
                 </div>
               </div>
               
-              <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
+              <div className="flex-1 overflow-y-auto p-8 bg-white/50 cyber-grid bg-fixed">
                 {modalTab === 'thread' ? (
-                  <div className="space-y-6">
+                  <div className="space-y-8">
                     {/* Sentiment Summary Header */}
                     {selectedTicket.messages.some(m => m.sentiment_score !== undefined) && (
                       <motion.div 
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between"
+                        className="bg-white p-5 rounded-2xl border border-black/5 shadow-sm backdrop-blur-md flex items-center justify-between"
                       >
                         <div>
-                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Current Sentiment Analysis</p>
-                          <div className="flex items-center gap-2">
+                          <p className="text-xs text-gray-500 font-black uppercase tracking-[0.2em] mb-2">Neural Sentiment Analysis</p>
+                          <div className="flex items-center gap-3">
                             <SentimentBadge score={selectedTicket.messages.reduce((acc, m) => m.sentiment_score !== undefined ? m.sentiment_score : acc, 0.5)} />
-                            <span className="text-xs text-gray-500 italic">Based on latest interaction</span>
+                            <span className="text-xs text-gray-400 font-bold italic">Real-time processing active</span>
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Urgency Level</p>
-                          <span className={`text-xs font-bold ${selectedTicket.priority === 'high' ? 'text-red-600' : 'text-blue-600'}`}>
+                          <p className="text-xs text-gray-500 font-black uppercase tracking-[0.2em] mb-2">Threat Level</p>
+                          <span className={`text-sm font-black tracking-widest ${selectedTicket.priority === 'high' ? 'text-red-600' : 'text-cyber-blue'}`}>
                             {selectedTicket.priority.toUpperCase()}
                           </span>
                         </div>
@@ -370,30 +375,32 @@ export const Dashboard: React.FC = () => {
                     {selectedTicket.messages.map((m, idx) => (
                       <motion.div 
                         key={m.id}
-                        initial={{ opacity: 0, x: m.role === 'customer' ? -10 : 10 }}
+                        initial={{ opacity: 0, x: m.role === 'customer' ? -20 : 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: idx * 0.05 }}
                         className={`flex ${m.role === 'customer' ? 'justify-start' : m.role === 'system' ? 'justify-center' : 'justify-end'}`}
                       >
                         {m.role === 'system' ? (
-                          <div className="bg-gray-200/50 text-gray-500 text-[11px] font-bold uppercase px-4 py-1.5 rounded-full tracking-wider border border-gray-200">
+                          <div className="bg-black/5 text-gray-500 text-xs font-black uppercase px-5 py-2 rounded-full tracking-[0.2em] border border-black/5">
                             {m.content}
                           </div>
                         ) : (
-                          <div className={`max-w-[85%] p-4 rounded-2xl shadow-sm border ${
-                            m.role === 'customer' ? 'bg-white text-gray-800 rounded-tl-none border-gray-100' : 'bg-blue-600 text-white rounded-tr-none border-blue-500'
+                          <div className={`max-w-[80%] p-6 rounded-2xl shadow-sm border backdrop-blur-sm ${
+                            m.role === 'customer' 
+                              ? 'bg-white text-gray-800 rounded-tl-none border-black/5' 
+                              : 'bg-gradient-to-br from-cyber-blue/10 to-cyber-purple/10 text-gray-900 rounded-tr-none border-cyber-blue/20'
                           }`}>
-                            <div className="flex justify-between items-center mb-2 gap-4">
-                              <span className="text-[10px] font-bold uppercase tracking-widest opacity-70 flex items-center gap-1.5">
-                                {m.role === 'customer' ? <User className="w-3 h-3" /> : <Bot className="w-3 h-3" />}
-                                {m.role === 'customer' ? 'Customer' : 'Digital FTE'} • {m.channel}
+                            <div className="flex justify-between items-center mb-4 gap-6">
+                              <span className="text-xs font-black uppercase tracking-[0.2em] text-gray-500 flex items-center gap-2">
+                                {m.role === 'customer' ? <User className="w-3.5 h-3.5 text-cyber-blue" /> : <Bot className="w-3.5 h-3.5 text-cyber-purple" />}
+                                {m.role === 'customer' ? 'Subject' : 'Digital FTE'} • {m.channel}
                               </span>
                               {m.sentiment_score !== undefined && (
                                 <SentimentBadge score={m.sentiment_score} />
                               )}
                             </div>
-                            <p className="text-sm whitespace-pre-wrap leading-relaxed">{m.content}</p>
-                            <div className="mt-2 text-[10px] text-right opacity-60">
+                            <p className="text-base whitespace-pre-wrap leading-relaxed font-medium">{m.content}</p>
+                            <div className="mt-4 text-xs text-right text-gray-400 font-black tracking-widest">
                               {new Date(m.created_at).toLocaleTimeString()}
                             </div>
                           </div>
@@ -401,67 +408,67 @@ export const Dashboard: React.FC = () => {
                       </motion.div>
                     ))}
                     {selectedTicket.status === TicketStatus.ESCALATED && (
-                      <div className="bg-red-50 border border-red-100 p-4 rounded-xl text-red-800 text-sm italic text-center shadow-sm">
-                        <div className="font-bold mb-1 uppercase text-[10px] tracking-widest">Escalation Alert</div>
-                        ⚠️ This ticket was escalated to human support by the AI.
+                      <div className="bg-red-500/10 border border-red-500/30 p-6 rounded-2xl text-red-400 text-base italic text-center shadow-2xl backdrop-blur-md">
+                        <div className="font-black mb-2 uppercase text-xs tracking-[0.3em]">Critical Escalation</div>
+                        Neural core detected high-priority conflict. Human intervention required.
                         <br/>
-                        Reason: {selectedTicket.resolution_notes || 'High severity detection'}
+                        <span className="text-gray-900 font-bold mt-2 inline-block">Reason: {selectedTicket.resolution_notes || 'Anomaly detected'}</span>
                       </div>
                     )}
                   </div>
                 ) : (
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Total Tickets</p>
-                        <p className="text-2xl font-black text-gray-900">{customerHistory.length}</p>
+                  <div className="space-y-8">
+                    <div className="grid grid-cols-3 gap-6">
+                      <div className="bg-white p-6 rounded-2xl border border-black/5 shadow-sm">
+                        <p className="text-xs text-gray-500 font-black uppercase tracking-widest mb-2">Total Sessions</p>
+                        <p className="text-3xl font-black text-gray-900">{customerHistory.length}</p>
                       </div>
-                      <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Resolved</p>
-                        <p className="text-2xl font-black text-green-600">{customerHistory.filter(t => t.status === TicketStatus.RESOLVED).length}</p>
+                      <div className="bg-white p-6 rounded-2xl border border-black/5 shadow-sm">
+                        <p className="text-xs text-gray-500 font-black uppercase tracking-widest mb-2">Resolved</p>
+                        <p className="text-3xl font-black text-green-600">{customerHistory.filter(t => t.status === TicketStatus.RESOLVED).length}</p>
                       </div>
-                      <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Avg. Sentiment</p>
-                        <p className="text-2xl font-black text-blue-600">
+                      <div className="bg-white p-6 rounded-2xl border border-black/5 shadow-sm">
+                        <p className="text-xs text-gray-500 font-black uppercase tracking-widest mb-2">Avg. Affinity</p>
+                        <p className="text-3xl font-black text-blue-600">
                           {(customerHistory.reduce((acc, t) => acc + (t.messages[0]?.sentiment_score || 0.5), 0) / customerHistory.length * 100).toFixed(0)}%
                         </p>
                       </div>
                     </div>
 
                     {/* Sentiment Trend Chart */}
-                    <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                      <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-4">Sentiment Trend (Last {customerHistory.length} Tickets)</p>
-                      <div className="h-32">
+                    <div className="bg-white p-6 rounded-2xl border border-black/5 shadow-sm">
+                      <p className="text-xs text-gray-500 font-black uppercase tracking-[0.2em] mb-6">Neural Affinity Trend</p>
+                      <div className="h-40">
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart data={[...customerHistory].reverse().map((t, i) => ({ 
                             name: `T-${customerHistory.length - i}`, 
                             sentiment: (t.messages[0]?.sentiment_score || 0.5) * 100 
                           }))}>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
                             <XAxis dataKey="name" hide />
                             <YAxis domain={[0, 100]} hide />
                             <Tooltip 
-                              contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', fontSize: '10px' }}
-                              labelStyle={{ fontWeight: 'bold' }}
+                              contentStyle={{ backgroundColor: '#fff', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '12px', color: '#1a1a1a', fontSize: '10px' }}
+                              labelStyle={{ fontWeight: 'black', color: '#0070f3' }}
                             />
-                            <Line type="monotone" dataKey="sentiment" stroke="#3b82f6" strokeWidth={3} dot={{ r: 4, fill: '#3b82f6' }} activeDot={{ r: 6 }} />
+                            <Line type="monotone" dataKey="sentiment" stroke="#0070f3" strokeWidth={4} dot={{ r: 4, fill: '#0070f3', strokeWidth: 0 }} activeDot={{ r: 8, fill: '#fff', stroke: '#0070f3', strokeWidth: 2 }} />
                           </LineChart>
                         </ResponsiveContainer>
                       </div>
                     </div>
 
                     <div>
-                      <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-3">Previous Interactions</h4>
-                      <div className="space-y-3">
+                      <h4 className="text-xs font-black text-gray-500 uppercase tracking-[0.3em] mb-6">Historical Data Logs</h4>
+                      <div className="space-y-4">
                         {customerHistory.map(t => (
-                          <div key={t.id} className={`p-4 rounded-xl border bg-white shadow-sm transition-all ${t.id === selectedTicket.id ? 'ring-2 ring-blue-500 border-blue-200' : 'border-gray-100 hover:border-gray-200'}`}>
-                            <div className="flex justify-between items-start mb-2">
+                          <div key={t.id} className={`p-6 rounded-2xl border bg-white shadow-sm transition-all ${t.id === selectedTicket.id ? 'ring-2 ring-cyber-blue border-cyber-blue/50 bg-blue-50' : 'border-black/5 hover:border-black/10'}`}>
+                            <div className="flex justify-between items-start mb-4">
                               <div>
-                                <p className="text-sm font-bold text-gray-900">{t.subject}</p>
-                                <p className="text-[10px] text-gray-400">{new Date(t.created_at).toLocaleDateString()} • {t.category}</p>
+                                <p className="text-base font-black text-gray-900 tracking-tight">{t.subject}</p>
+                                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">{new Date(t.created_at).toLocaleDateString()} • {t.category}</p>
                               </div>
-                              <div className="flex flex-col items-end gap-1">
-                                <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase border ${STATUS_COLORS[t.status]}`}>
+                              <div className="flex flex-col items-end gap-2">
+                                <span className={`px-2.5 py-1 rounded-full text-xs font-black uppercase tracking-widest border ${STATUS_COLORS[t.status]}`}>
                                   {t.status.replace('_', ' ')}
                                 </span>
                                 {t.messages[0]?.sentiment_score !== undefined && (
@@ -469,7 +476,7 @@ export const Dashboard: React.FC = () => {
                                 )}
                               </div>
                             </div>
-                            <p className="text-xs text-gray-500 line-clamp-2 italic">"{t.messages[0].content}"</p>
+                            <p className="text-xs text-gray-600 line-clamp-2 italic font-medium">"{t.messages[0].content}"</p>
                           </div>
                         ))}
                       </div>
@@ -478,14 +485,14 @@ export const Dashboard: React.FC = () => {
                 )}
               </div>
 
-              <div className="p-4 border-t border-gray-100 bg-white">
+              <div className="p-8 border-t border-black/10 bg-white/80 backdrop-blur-xl">
                  {selectedTicket.ai_suggestions && selectedTicket.ai_suggestions.length > 0 && (
-                   <div className="mb-4">
-                     <div className="flex items-center gap-2 mb-2">
-                       <Bot className="w-3 h-3 text-blue-500" />
-                       <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">AI Suggested Replies</p>
+                   <div className="mb-6">
+                     <div className="flex items-center gap-3 mb-4">
+                       <Bot className="w-4 h-4 text-cyber-blue" />
+                       <p className="text-xs font-black text-gray-500 uppercase tracking-[0.3em]">Neural Response Suggestions</p>
                      </div>
-                     <div className="flex flex-wrap gap-2">
+                     <div className="flex flex-wrap gap-3">
                        {selectedTicket.ai_suggestions.map((suggestion, idx) => (
                          <AISuggestionChip 
                            key={idx} 
@@ -496,22 +503,22 @@ export const Dashboard: React.FC = () => {
                      </div>
                    </div>
                  )}
-                 <div className="flex gap-2">
+                 <div className="flex gap-4">
                    <input 
                     id="human-reply-input"
                     type="text" 
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
-                    placeholder="Human takeover - Type a reply..." 
-                    className="flex-1 px-4 py-2 bg-slate-900 text-white border border-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-slate-500"
+                    placeholder="Enter manual override response..." 
+                    className="flex-1 px-6 py-4 bg-black/5 text-gray-900 border border-black/10 rounded-xl outline-none focus:ring-2 focus:ring-cyber-blue placeholder:text-gray-400 font-medium transition-all"
                     onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                   />
                    <button 
                     onClick={handleSendMessage}
-                    className="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors"
+                    className="px-8 py-4 bg-gradient-to-r from-cyber-blue to-cyber-purple text-white font-black text-sm uppercase tracking-widest rounded-xl flex items-center gap-3 hover:shadow-[0_0_25px_rgba(0,242,255,0.4)] transition-all transform active:scale-95"
                    >
                      <Send className="w-4 h-4" />
-                     Send
+                     Transmit
                    </button>
                  </div>
               </div>
